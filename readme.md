@@ -9,4 +9,4 @@ Also, Im using my own forks of
 https://github.com/mmajewsk/ORB_SLAM2
 https://github.com/mmajewsk/ORB_SLAM2-PythonBindings
 
-
+**The script is missing installation instructions for protobuff 3.5.1**, so you have to do this on your own.

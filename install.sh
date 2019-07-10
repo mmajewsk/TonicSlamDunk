@@ -2,26 +2,29 @@
 
 DIR1=$(pwd)/builds
 MAINDIR=$(pwd)/builds/3rdparty
-CONDA_ENV_NAME="SlumDunkEnv"
+CONDA_ENV_NAME="SlamDunkEnv"
 
 # movement
 mkdir ${DIR1}
 mkdir ${MAINDIR}
 cd ${MAINDIR}
 mkdir eigen3
+mkdir eigen3_installed
 
 # conda
-conda create -y -n CONDA_ENV_NAME python=3.6
-source activate CONDA_ENV_NAME
+conda create -y -n ${CONDA_ENV_NAME} python=3.6
+source activate ${CONDA_ENV_NAME}
 conda install opencv -y
 conda install pytorch torchvision -c pytorch -y
 conda install -c conda-forge imageio -y
 conda install ffmpeg -c conda-forge -y
+conda install -c anaconda boost
 
 # movement
 cd ${MAINDIR}
 cd eigen3
 
+# eigen
 wget http://bitbucket.org/eigen/eigen/get/3.3.5.tar.gz
 tar -xzf 3.3.5.tar.gz
 cd eigen-eigen-b3f3d4950030
@@ -30,19 +33,22 @@ cd eigen-eigen-b3f3d4950030
 mkdir build
 cd build
 
-
+# eigen
 cmake .. -DCMAKE_INSTALL_PREFIX=${MAINDIR}/eigen3_installed/
 make install
 
 # movement
 cd ${MAINDIR}
 
+# glew
 wget https://sourceforge.net/projects/glew/files/glew/2.1.0/glew-2.1.0.zip
 unzip glew-2.1.0.zip
 
 # movement
 cd glew-2.1.0/
 cd build
+
+# glew
 cmake ./cmake  -DCMAKE_INSTALL_PREFIX=${MAINDIR}/glew_installed
 make -j4
 make install
@@ -50,6 +56,8 @@ make install
 # movement
 cd ${MAINDIR}
 pip install numpy --upgrade
+
+# pangolin
 rm Pangolin -rf
 git clone https://github.com/stevenlovegrove/Pangolin.git
 
@@ -57,18 +65,32 @@ git clone https://github.com/stevenlovegrove/Pangolin.git
 cd Pangolin
 mkdir build
 cd build
+
+# pangolin
 cmake .. -DCMAKE_PREFIX_PATH=${MAINDIR}/glew_installed/ -DCMAKE_LIBRARY_PATH=${MAINDIR}/glew_installed/lib/ -DCMAKE_INSTALL_PREFIX=${MAINDIR}/pangolin_installed
 cmake --build .
 
 # movement
 cd ${MAINDIR}
-rm ORB_SLAM2 -rf
-rm ORB_SLAM2-PythonBindings -rf
+#rm ORB_SLAM2 -rf
+#rm ORB_SLAM2-PythonBindings -rf
 git clone https://github.com/mmajewsk/ORB_SLAM2
 git clone https://github.com/mmajewsk/ORB_SLAM2-PythonBindings
+git clone https://github.com/AlejandroSilvestri/osmap
+
+# osmap
+cd ${MAINDIR}/osmap
+protoc --cpp_out=. osmap.proto
+cp osmap.pb.cc ../ORB_SLAM2/src/
+cp osmap.pb.cc ../ORB_SLAM2/include/
+cp include/Osmap.h ../ORB_SLAM2/include/
+cp src/Osmap.cpp ../ORB_SLAM2/src/
+cp osmap.pb.h ../ORB_SLAM2/include/
 
 # movement
 cd ${MAINDIR}/ORB_SLAM2
+
+# ORB_SLAM2
 sed -i "s,cmake .. -DCMAKE_BUILD_TYPE=Release,cmake .. -DCMAKE_BUILD_TYPE=Release -DEIGEN3_INCLUDE_DIR=${MAINDIR}/eigen3_installed/include/eigen3/ -DCMAKE_INSTALL_PREFIX=${MAINDIR}/ORBSLAM2_installed ,g" build.sh
 ln -s ${MAINDIR}/eigen3_installed/include/eigen3/Eigen ${MAINDIR}/ORB_SLAM2/Thirdparty/g2o/g2o/core/Eigen
 ./build.sh
