@@ -14,7 +14,7 @@ mkdir eigen3_installed
 # conda
 conda create -y -n ${CONDA_ENV_NAME} python=3.6
 source activate ${CONDA_ENV_NAME}
-conda install opencv -y
+conda install --channel https://conda.anaconda.org/menpo opencv3
 conda install pytorch torchvision -c pytorch -y
 conda install -c conda-forge imageio -y
 conda install ffmpeg -c conda-forge -y
