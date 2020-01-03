@@ -53,3 +53,8 @@ some assignment to new opencv matrix.
 # 15.10.19
 I won with the loading map problem, the solution is ugly, but workable.
 Have to push changes to osmap as well.
+
+# 16.10.19 
+So I need an access to the localisation from the python API.
+first lets move the images from the tum_example to be loaded by python
+Done. Now ill move api a bit.

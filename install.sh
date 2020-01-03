@@ -117,3 +117,9 @@ cmake .. -DPYTHON_INCLUDE_DIR=$(python -c "from distutils.sysconfig import get_p
 make
 make install
 cp ${MAINDIR}/ORB_SLAM2/Vocabulary/ORBvoc.txt ${DIR1}/data/
+
+# pip install pyamlo
+# pip uninstall protobuf
+#pip uninstall google
+#pip install google
+#pip install protobuf
