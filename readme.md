@@ -37,6 +37,17 @@ All of the installation process is pure hack.
 Improvements are welcomed.
 Just run `./install.sh` and watch the world burn.
 
+P.S. Did not wanted to do it this way but you might need to install opengl like this before running installation
+
+'sudo apt-get install libgl-dev'
+'sudo apt install libglu1-mesa-dev freeglut3-dev'
+
+Also protobuff installation from here https://github.com/protocolbuffers/protobuf/tree/106ffc04be1abf3ff3399f54ccf149815b287dd9/src
+
+also you need to install this
+ sudo apt-get install libboost-all-dev
+
+
 # Dev notes
 
 # 10.10.19
@@ -58,3 +69,9 @@ Have to push changes to osmap as well.
 So I need an access to the localisation from the python API.
 first lets move the images from the tum_example to be loaded by python
 Done. Now ill move api a bit.
+
+# 04.01.20
+might need to install opengl before
+
+# 05.01.20
+Ok i think this is it, i tried it on different machine, im setting up dockerfile to be sure.
