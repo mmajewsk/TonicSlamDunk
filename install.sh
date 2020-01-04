@@ -14,11 +14,11 @@ mkdir eigen3_installed
 # conda
 conda create -y -n ${CONDA_ENV_NAME} python=3.6
 source activate ${CONDA_ENV_NAME}
-conda install --channel https://conda.anaconda.org/menpo opencv3
+conda install --channel https://conda.anaconda.org/menpo opencv3 -y
 conda install pytorch torchvision -c pytorch -y
 conda install -c conda-forge imageio -y
 conda install ffmpeg -c conda-forge -y
-conda install -c anaconda boost
+conda install boost -y
 
 # movement
 cd ${MAINDIR}
@@ -76,7 +76,7 @@ cd ${MAINDIR}
 #rm ORB_SLAM2-PythonBindings -rf
 git clone https://github.com/mmajewsk/ORB_SLAM2
 git clone https://github.com/mmajewsk/ORB_SLAM2-PythonBindings
-git clone https://github.com/AlejandroSilvestri/osmap
+git clone https://github.com/mmajewsk/osmap
 
 # osmap
 cd ${MAINDIR}/osmap
@@ -116,6 +116,7 @@ sed -i "s,lib/python3.5/dist-packages,${CONDA_DIR}/envs/${CONDA_ENV_NAME}/lib/py
 cmake .. -DPYTHON_INCLUDE_DIR=$(python -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())") -DPYTHON_LIBRARY=$(python -c "import distutils.sysconfig as sysconfig; print(sysconfig.get_config_var('LIBDIR'))")/libpython3.6m.so -DPYTHON_EXECUTABLE:FILEPATH=`which python` -DCMAKE_LIBRARY_PATH=${MAINDIR}/ORBSLAM2_installed/lib -DCMAKE_INCLUDE_PATH=${MAINDIR}/ORBSLAM2_installed/include;${MAINDIR}/eigen3_installed/include/eigen3 -DCMAKE_INSTALL_PREFIX=${MAINDIR}/pyorbslam2_installed
 make
 make install
+mkdir ${DIR1}/data
 cp ${MAINDIR}/ORB_SLAM2/Vocabulary/ORBvoc.txt ${DIR1}/data/
 
 # pip install pyamlo
