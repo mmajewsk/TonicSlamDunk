@@ -3,6 +3,8 @@
 DIR1=$(pwd)/builds
 MAINDIR=$(pwd)/builds/3rdparty
 CONDA_ENV_NAME="SlamDunkEnv"
+CONDA_DIR=$(dirname $(dirname $(which conda)))
+CONDA_ENV_DIR=${CONDA_DIR}/envs/${CONDA_ENV_NAME}
 
 # movement
 mkdir ${DIR1}
@@ -11,6 +13,8 @@ cd ${MAINDIR}
 mkdir eigen3
 mkdir eigen3_installed
 
+apt-get install libgl-dev libglu1-mesa-dev freeglut3-dev zlib1g-dev cmake install curl git wget autoconf automake libtool curl make g++ unzip libgtk2.0-0
+
 # conda
 conda create -y -n ${CONDA_ENV_NAME} python=3.6
 source activate ${CONDA_ENV_NAME}
@@ -18,7 +22,22 @@ conda install --channel https://conda.anaconda.org/menpo opencv3 -y
 conda install pytorch torchvision -c pytorch -y
 conda install -c conda-forge imageio -y
 conda install ffmpeg -c conda-forge -y
-conda install boost -y
+conda install -c conda-forge boost==1.65.1
+conda install -c conda-forge libboost==1.65.1
+ln -s $CONDA_ENV_DIR/lib/libboost_python3.so $CONDA_ENV_DIR/lib/libboost_python-py36.so
+
+
+cd ${MAINDIR}
+wget https://github.com/protocolbuffers/protobuf/releases/download/v3.5.1/protobuf-all-3.5.1.zip
+unzip protobuf-all-3.5.1.zip
+protobuf-3.5.1 &&\
+	./autogen.sh &&\
+	./configure &&\
+	make &&\
+	make install &&\
+	ldconfig &&\
+	./configure --prefix=/usr &&\
+	cd ..
 
 # movement
 cd ${MAINDIR}
@@ -86,7 +105,6 @@ cp osmap.pb.cc ../ORB_SLAM2/include/
 cp include/Osmap.h ../ORB_SLAM2/include/
 cp src/Osmap.cpp ../ORB_SLAM2/src/
 cp osmap.pb.h ../ORB_SLAM2/include/
-
 # movement
 cd ${MAINDIR}/ORB_SLAM2
 
@@ -95,6 +113,8 @@ sed -i "s,cmake .. -DCMAKE_BUILD_TYPE=Release,cmake .. -DCMAKE_BUILD_TYPE=Releas
 ln -s ${MAINDIR}/eigen3_installed/include/eigen3/Eigen ${MAINDIR}/ORB_SLAM2/Thirdparty/g2o/g2o/core/Eigen
 ./build.sh
 
+
+cp -rf $MAINDIR/ORBSLAM2_installed/include/* $CONDA_ENV_DIR/include/
 # movement
 cd build
 
@@ -111,7 +131,6 @@ cd ${MAINDIR}/ORB_SLAM2-PythonBindings
 mkdir build
 cd build
 
-CONDA_DIR=$(dirname $(dirname $(which conda)))
 sed -i "s,lib/python3.5/dist-packages,${CONDA_DIR}/envs/${CONDA_ENV_NAME}/lib/python3.6/site-packages/,g" ../CMakeLists.txt
 cmake .. -DPYTHON_INCLUDE_DIR=$(python -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())") -DPYTHON_LIBRARY=$(python -c "import distutils.sysconfig as sysconfig; print(sysconfig.get_config_var('LIBDIR'))")/libpython3.6m.so -DPYTHON_EXECUTABLE:FILEPATH=`which python` -DCMAKE_LIBRARY_PATH=${MAINDIR}/ORBSLAM2_installed/lib -DCMAKE_INCLUDE_PATH=${MAINDIR}/ORBSLAM2_installed/include;${MAINDIR}/eigen3_installed/include/eigen3 -DCMAKE_INSTALL_PREFIX=${MAINDIR}/pyorbslam2_installed
 make
