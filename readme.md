@@ -35,17 +35,30 @@ There is some problem in explicit call for `mapLoad` that i did not manage to so
 
 All of the installation process is pure hack.
 Improvements are welcomed.
+
+## Dockerfile
+
+This is easy, just build the image or pull it from dockerhub:
+```
+docker pull mwmajewsk/tonic_slam_dunk:working
+```
+
+## Ubuntu install script
+
+First of all you need to install some dependencies:
+
+```
+apt-get install libgl-dev libglu1-mesa-dev freeglut3-dev zlib1g-dev cmake curl git wget autoconf automake libtool curl make g++ unzip libgtk2.0-0
+```
+
+Also, this script assumes that you have 
+[Anaconda](https://www.anaconda.com/distribution/) installed.
+
+**WARNING** This script may change your version of protobuff.
+
+Ok, you are ready to this.
 Just run `./install.sh` and watch the world burn.
 
-P.S. Did not wanted to do it this way but you might need to install opengl like this before running installation
-
-'sudo apt-get install libgl-dev'
-'sudo apt install libglu1-mesa-dev freeglut3-dev'
-
-Also protobuff installation from here https://github.com/protocolbuffers/protobuf/tree/106ffc04be1abf3ff3399f54ccf149815b287dd9/src
-
-also you need to install this
- sudo apt-get install libboost-all-dev
 
 
 # Dev notes
@@ -75,3 +88,9 @@ might need to install opengl before
 
 # 05.01.20
 Ok i think this is it, i tried it on different machine, im setting up dockerfile to be sure.
+
+# 13.01.20 
+
+Docker works, im still testing install.sh on ubuntu
+Install.sh still needs some tweaks to work, but im leaving it like that. You can use dockerfile to recreate correct steps.
+In case if it is needed this repo contains output of the build of the image.

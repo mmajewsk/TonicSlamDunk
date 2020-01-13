@@ -6,14 +6,13 @@ CONDA_ENV_NAME="SlamDunkEnv"
 CONDA_DIR=$(dirname $(dirname $(which conda)))
 CONDA_ENV_DIR=${CONDA_DIR}/envs/${CONDA_ENV_NAME}
 
-# movement
+# dirs
 mkdir ${DIR1}
 mkdir ${MAINDIR}
 cd ${MAINDIR}
 mkdir eigen3
 mkdir eigen3_installed
 
-apt-get install libgl-dev libglu1-mesa-dev freeglut3-dev zlib1g-dev cmake install curl git wget autoconf automake libtool curl make g++ unzip libgtk2.0-0
 
 # conda
 conda create -y -n ${CONDA_ENV_NAME} python=3.6
@@ -27,6 +26,7 @@ conda install -c conda-forge libboost==1.65.1
 ln -s $CONDA_ENV_DIR/lib/libboost_python3.so $CONDA_ENV_DIR/lib/libboost_python-py36.so
 
 
+#protobuf
 cd ${MAINDIR}
 wget https://github.com/protocolbuffers/protobuf/releases/download/v3.5.1/protobuf-all-3.5.1.zip
 unzip protobuf-all-3.5.1.zip
@@ -39,7 +39,7 @@ protobuf-3.5.1 &&\
 	./configure --prefix=/usr &&\
 	cd ..
 
-# movement
+# dirs
 cd ${MAINDIR}
 cd eigen3
 
@@ -48,7 +48,7 @@ wget http://bitbucket.org/eigen/eigen/get/3.3.5.tar.gz
 tar -xzf 3.3.5.tar.gz
 cd eigen-eigen-b3f3d4950030
 
-# movement
+# dirs
 mkdir build
 cd build
 
@@ -56,14 +56,14 @@ cd build
 cmake .. -DCMAKE_INSTALL_PREFIX=${MAINDIR}/eigen3_installed/
 make install
 
-# movement
+# dirs
 cd ${MAINDIR}
 
 # glew
 wget https://sourceforge.net/projects/glew/files/glew/2.1.0/glew-2.1.0.zip
 unzip glew-2.1.0.zip
 
-# movement
+# dirs
 cd glew-2.1.0/
 cd build
 
@@ -72,7 +72,7 @@ cmake ./cmake  -DCMAKE_INSTALL_PREFIX=${MAINDIR}/glew_installed
 make -j4
 make install
 
-# movement
+# numpy
 cd ${MAINDIR}
 pip install numpy --upgrade
 
@@ -80,7 +80,7 @@ pip install numpy --upgrade
 rm Pangolin -rf
 git clone https://github.com/stevenlovegrove/Pangolin.git
 
-# movement
+# dirs
 cd Pangolin
 mkdir build
 cd build
@@ -89,7 +89,7 @@ cd build
 cmake .. -DCMAKE_PREFIX_PATH=${MAINDIR}/glew_installed/ -DCMAKE_LIBRARY_PATH=${MAINDIR}/glew_installed/lib/ -DCMAKE_INSTALL_PREFIX=${MAINDIR}/pangolin_installed
 cmake --build .
 
-# movement
+# dirs
 cd ${MAINDIR}
 #rm ORB_SLAM2 -rf
 #rm ORB_SLAM2-PythonBindings -rf
@@ -105,28 +105,27 @@ cp osmap.pb.cc ../ORB_SLAM2/include/
 cp include/Osmap.h ../ORB_SLAM2/include/
 cp src/Osmap.cpp ../ORB_SLAM2/src/
 cp osmap.pb.h ../ORB_SLAM2/include/
-# movement
+# dirs
 cd ${MAINDIR}/ORB_SLAM2
 
 # ORB_SLAM2
 sed -i "s,cmake .. -DCMAKE_BUILD_TYPE=Release,cmake .. -DCMAKE_BUILD_TYPE=Release -DEIGEN3_INCLUDE_DIR=${MAINDIR}/eigen3_installed/include/eigen3/ -DCMAKE_INSTALL_PREFIX=${MAINDIR}/ORBSLAM2_installed ,g" build.sh
 ln -s ${MAINDIR}/eigen3_installed/include/eigen3/Eigen ${MAINDIR}/ORB_SLAM2/Thirdparty/g2o/g2o/core/Eigen
 ./build.sh
-
-
 cp -rf $MAINDIR/ORBSLAM2_installed/include/* $CONDA_ENV_DIR/include/
-# movement
+
+# dirs
 cd build
 
 make install
 
-# movement
+# dirs
 cd ${MAINDIR}
 cd ORB_SLAM2-PythonBindings/src
 
 ln -s ${MAINDIR}/eigen3_installed/include/eigen3/Eigen Eigen
 
-# movement
+# dirs
 cd ${MAINDIR}/ORB_SLAM2-PythonBindings
 mkdir build
 cd build
@@ -138,8 +137,3 @@ make install
 mkdir ${DIR1}/data
 cp ${MAINDIR}/ORB_SLAM2/Vocabulary/ORBvoc.txt ${DIR1}/data/
 
-# pip install pyamlo
-# pip uninstall protobuf
-#pip uninstall google
-#pip install google
-#pip install protobuf
