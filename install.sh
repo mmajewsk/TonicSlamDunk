@@ -3,16 +3,13 @@
 DIR1=$(pwd)/builds
 MAINDIR=$(pwd)/builds/3rdparty
 CONDA_ENV_NAME="SlamDunkEnv"
-CONDA_DIR=$(dirname $(dirname $(which conda)))
-CONDA_ENV_DIR=${CONDA_DIR}/envs/${CONDA_ENV_NAME}
 
-# dirs
+# movement
 mkdir ${DIR1}
 mkdir ${MAINDIR}
 cd ${MAINDIR}
 mkdir eigen3
 mkdir eigen3_installed
-
 
 # conda
 conda create -y -n ${CONDA_ENV_NAME} python=3.6
@@ -21,25 +18,12 @@ conda install --channel https://conda.anaconda.org/menpo opencv3 -y
 conda install pytorch torchvision -c pytorch -y
 conda install -c conda-forge imageio -y
 conda install ffmpeg -c conda-forge -y
-conda install -c conda-forge boost==1.65.1
-conda install -c conda-forge libboost==1.65.1
-ln -s $CONDA_ENV_DIR/lib/libboost_python3.so $CONDA_ENV_DIR/lib/libboost_python-py36.so
+#conda install boost -y
+conda install -c conda-forge boost==1.65.1 libboost=1.65.1
+CONDA_DIR=$(dirname $(dirname $(which conda)))
+ln -s ${CONDA_ENV_DIR}/lib/libboost_python3.so ${CONDA_ENV_DIR}/lib/libboost_python-py36.so
 
-
-#protobuf
-cd ${MAINDIR}
-wget https://github.com/protocolbuffers/protobuf/releases/download/v3.5.1/protobuf-all-3.5.1.zip
-unzip protobuf-all-3.5.1.zip
-protobuf-3.5.1 &&\
-	./autogen.sh &&\
-	./configure &&\
-	make &&\
-	make install &&\
-	ldconfig &&\
-	./configure --prefix=/usr &&\
-	cd ..
-
-# dirs
+# movement
 cd ${MAINDIR}
 cd eigen3
 
@@ -48,7 +32,7 @@ wget http://bitbucket.org/eigen/eigen/get/3.3.5.tar.gz
 tar -xzf 3.3.5.tar.gz
 cd eigen-eigen-b3f3d4950030
 
-# dirs
+# movement
 mkdir build
 cd build
 
@@ -56,14 +40,14 @@ cd build
 cmake .. -DCMAKE_INSTALL_PREFIX=${MAINDIR}/eigen3_installed/
 make install
 
-# dirs
+# movement
 cd ${MAINDIR}
 
 # glew
 wget https://sourceforge.net/projects/glew/files/glew/2.1.0/glew-2.1.0.zip
 unzip glew-2.1.0.zip
 
-# dirs
+# movement
 cd glew-2.1.0/
 cd build
 
@@ -72,7 +56,7 @@ cmake ./cmake  -DCMAKE_INSTALL_PREFIX=${MAINDIR}/glew_installed
 make -j4
 make install
 
-# numpy
+# movement
 cd ${MAINDIR}
 pip install numpy --upgrade
 
@@ -80,7 +64,7 @@ pip install numpy --upgrade
 rm Pangolin -rf
 git clone https://github.com/stevenlovegrove/Pangolin.git
 
-# dirs
+# movement
 cd Pangolin
 mkdir build
 cd build
@@ -89,7 +73,7 @@ cd build
 cmake .. -DCMAKE_PREFIX_PATH=${MAINDIR}/glew_installed/ -DCMAKE_LIBRARY_PATH=${MAINDIR}/glew_installed/lib/ -DCMAKE_INSTALL_PREFIX=${MAINDIR}/pangolin_installed
 cmake --build .
 
-# dirs
+# movement
 cd ${MAINDIR}
 #rm ORB_SLAM2 -rf
 #rm ORB_SLAM2-PythonBindings -rf
@@ -105,30 +89,33 @@ cp osmap.pb.cc ../ORB_SLAM2/include/
 cp include/Osmap.h ../ORB_SLAM2/include/
 cp src/Osmap.cpp ../ORB_SLAM2/src/
 cp osmap.pb.h ../ORB_SLAM2/include/
-# dirs
+
+# movement
 cd ${MAINDIR}/ORB_SLAM2
 
 # ORB_SLAM2
 sed -i "s,cmake .. -DCMAKE_BUILD_TYPE=Release,cmake .. -DCMAKE_BUILD_TYPE=Release -DEIGEN3_INCLUDE_DIR=${MAINDIR}/eigen3_installed/include/eigen3/ -DCMAKE_INSTALL_PREFIX=${MAINDIR}/ORBSLAM2_installed ,g" build.sh
 ln -s ${MAINDIR}/eigen3_installed/include/eigen3/Eigen ${MAINDIR}/ORB_SLAM2/Thirdparty/g2o/g2o/core/Eigen
 ./build.sh
-cp -rf $MAINDIR/ORBSLAM2_installed/include/* $CONDA_ENV_DIR/include/
 
-# dirs
+# movement
 cd build
 
 make install
 
-# dirs
+# movement
 cd ${MAINDIR}
 cd ORB_SLAM2-PythonBindings/src
 
 ln -s ${MAINDIR}/eigen3_installed/include/eigen3/Eigen Eigen
 
-# dirs
+# movement
 cd ${MAINDIR}/ORB_SLAM2-PythonBindings
 mkdir build
 cd build
+
+cp -rf $MAINDIR/ORBSLAM2_installed/include/* $CONDA_DIR/include/
+cp -rf $MAINDIR/ORBSLAM2_installed/lib/* $CONDA_DIR/lib/
 
 sed -i "s,lib/python3.5/dist-packages,${CONDA_DIR}/envs/${CONDA_ENV_NAME}/lib/python3.6/site-packages/,g" ../CMakeLists.txt
 cmake .. -DPYTHON_INCLUDE_DIR=$(python -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())") -DPYTHON_LIBRARY=$(python -c "import distutils.sysconfig as sysconfig; print(sysconfig.get_config_var('LIBDIR'))")/libpython3.6m.so -DPYTHON_EXECUTABLE:FILEPATH=`which python` -DCMAKE_LIBRARY_PATH=${MAINDIR}/ORBSLAM2_installed/lib -DCMAKE_INCLUDE_PATH=${MAINDIR}/ORBSLAM2_installed/include;${MAINDIR}/eigen3_installed/include/eigen3 -DCMAKE_INSTALL_PREFIX=${MAINDIR}/pyorbslam2_installed
@@ -137,3 +124,8 @@ make install
 mkdir ${DIR1}/data
 cp ${MAINDIR}/ORB_SLAM2/Vocabulary/ORBvoc.txt ${DIR1}/data/
 
+# pip install pyamlo
+# pip uninstall protobuf
+#pip uninstall google
+#pip install google
+#pip install protobuf
