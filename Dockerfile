@@ -131,7 +131,7 @@ RUN cd $MAINDIR &&\
 	mkdir build &&\
 	cd build &&\
 	CONDA_DIR=$(dirname $(dirname $(which conda))) &&\
-	sed -i "s,lib/python3.5/dist-packages,${CONDA_DIR}/envs/$CONDA_ENV_NAME/lib/python3.6/site-packages/,g" ../CMakeLists.txt &&\
+	sed -i "s,lib/python3.5/dist-packages,${CONDA_ENV_DIR}/lib/python3.6/site-packages/,g" ../CMakeLists.txt &&\
 	cmake .. -DPYTHON_INCLUDE_DIR=$(python -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())") -DPYTHON_LIBRARY=$(python -c "import distutils.sysconfig as sysconfig; print(sysconfig.get_config_var('LIBDIR'))")/libpython3.6m.so -DPYTHON_EXECUTABLE:FILEPATH=`which python` -DCMAKE_LIBRARY_PATH=/app/builds/3rdparty/ORBSLAM2_installed/lib -DCMAKE_INCLUDE_PATH=/app/builds/3rdparty/ORBSLAM2_installed/include:/app/builds/3rdparty/eigen3_installed/include/eigen3 -DCMAKE_INSTALL_PREFIX=/app/builds/3rdparty/pyorbslam2_installed &&\
 	make &&\
 	make install &&\

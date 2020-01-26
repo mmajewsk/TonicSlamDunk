@@ -21,6 +21,7 @@ conda install ffmpeg -c conda-forge -y
 #conda install boost -y
 conda install -c conda-forge boost==1.65.1 libboost=1.65.1
 CONDA_DIR=$(dirname $(dirname $(which conda)))
+CONDA_ENV_DIR=${CONDA_DIR}/envs/${CONDA_ENV_NAME}
 ln -s ${CONDA_ENV_DIR}/lib/libboost_python3.so ${CONDA_ENV_DIR}/lib/libboost_python-py36.so
 
 # movement
@@ -83,12 +84,13 @@ git clone https://github.com/mmajewsk/osmap
 
 # osmap
 cd ${MAINDIR}/osmap
-protoc --cpp_out=. osmap.proto
+protoc --cpp_out=. --python_out=. osmap.proto
 cp osmap.pb.cc ../ORB_SLAM2/src/
 cp osmap.pb.cc ../ORB_SLAM2/include/
 cp include/Osmap.h ../ORB_SLAM2/include/
 cp src/Osmap.cpp ../ORB_SLAM2/src/
 cp osmap.pb.h ../ORB_SLAM2/include/
+cp osmap_pb2.py ${CONDA_ENV_DIR}/liv/python3.6/
 
 # movement
 cd ${MAINDIR}/ORB_SLAM2
@@ -114,10 +116,10 @@ cd ${MAINDIR}/ORB_SLAM2-PythonBindings
 mkdir build
 cd build
 
-cp -rf $MAINDIR/ORBSLAM2_installed/include/* $CONDA_DIR/include/
-cp -rf $MAINDIR/ORBSLAM2_installed/lib/* $CONDA_DIR/lib/
+cp -rf $MAINDIR/ORBSLAM2_installed/include/* $CONDA_ENV_DIR/include/
+cp -rf $MAINDIR/ORBSLAM2_installed/lib/* $CONDA_ENV_DIR/lib/
 
-sed -i "s,lib/python3.5/dist-packages,${CONDA_DIR}/envs/${CONDA_ENV_NAME}/lib/python3.6/site-packages/,g" ../CMakeLists.txt
+sed -i "s,lib/python3.5/dist-packages,${CONDA_ENV_DIR}/lib/python3.6/site-packages/,g" ../CMakeLists.txt
 cmake .. -DPYTHON_INCLUDE_DIR=$(python -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())") -DPYTHON_LIBRARY=$(python -c "import distutils.sysconfig as sysconfig; print(sysconfig.get_config_var('LIBDIR'))")/libpython3.6m.so -DPYTHON_EXECUTABLE:FILEPATH=`which python` -DCMAKE_LIBRARY_PATH=${MAINDIR}/ORBSLAM2_installed/lib -DCMAKE_INCLUDE_PATH=${MAINDIR}/ORBSLAM2_installed/include;${MAINDIR}/eigen3_installed/include/eigen3 -DCMAKE_INSTALL_PREFIX=${MAINDIR}/pyorbslam2_installed
 make
 make install
