@@ -101,7 +101,7 @@ if [[ $# == 0 || $1 == "osmap" || $1 == "rebuild" ]]; then
 	cp include/Osmap.h ../ORB_SLAM2/include/
 	cp src/Osmap.cpp ../ORB_SLAM2/src/
 	cp osmap.pb.h ../ORB_SLAM2/include/
-	cp osmap_pb2.py ${CONDA_ENV_DIR}/liv/python3.6/
+	cp osmap_pb2.py ${CONDA_ENV_DIR}/lib/python3.6/
 fi
 
 if [[ $# == 0 || $1 == "osmap" || $1 == "rebuild" || $1 == "orbslam" ]]; then
@@ -121,6 +121,9 @@ fi
 
 if [[ $# == 0 || $1 == "osmap" || $1 == "rebuild" || $1 == "orbslam" || $1 == "python_bindings" ]]; then
 	# movement
+	echo "$CONDA_ENV_DIR"
+	which python
+	echo "============================================="
 	cd ${MAINDIR}
 	cd ORB_SLAM2-PythonBindings/src
 
@@ -140,6 +143,7 @@ if [[ $# == 0 || $1 == "osmap" || $1 == "rebuild" || $1 == "orbslam" || $1 == "p
 	make install
 	mkdir ${DIR1}/data
 	cp ${MAINDIR}/ORB_SLAM2/Vocabulary/ORBvoc.txt ${DIR1}/data/
+	chmod u+x ${DIR1}/data/ORBvoc.txt 
 
 fi
 
