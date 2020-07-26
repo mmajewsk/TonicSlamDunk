@@ -94,3 +94,8 @@ Ok i think this is it, i tried it on different machine, im setting up dockerfile
 Docker works, im still testing install.sh on ubuntu
 Install.sh still needs some tweaks to work, but im leaving it like that. You can use dockerfile to recreate correct steps.
 In case if it is needed this repo contains output of the build of the image.
+
+# 23.07.20
+
+The build did not work for me, unless run in tmux.
+Probably beacuse in tmux there is additional path in PATH /home/{username}/.local/bin
