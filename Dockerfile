@@ -60,7 +60,7 @@ RUN conda install --channel https://conda.anaconda.org/menpo opencv3 -y &&\
 	conda install pytorch torchvision -c pytorch -y &&\
 	conda install -c conda-forge imageio -y &&\
 	conda install ffmpeg -c conda-forge -y &&\
-	conda install -c conda-forge boost==1.65.1 libboost=1.65.1
+	conda install -c conda-forge boost==1.65.1 libboost=1.65.1 -y
 
 RUN ln -s $CONDA_ENV_DIR/lib/libboost_python3.so $CONDA_ENV_DIR/lib/libboost_python-py36.so
 
@@ -69,8 +69,8 @@ RUN ln -s $CONDA_ENV_DIR/lib/libboost_python3.so $CONDA_ENV_DIR/lib/libboost_pyt
 # eigen
 RUN cd $MAINDIR/eigen3 &&\
 	wget https://gitlab.com/libeigen/eigen/-/archive/3.3.5/eigen-3.3.5.tar.gz &&\
-	tar -xzf 3.3.5.tar.gz &&\
-	cd eigen-eigen-b3f3d4950030 &&\
+	tar -xzf eigen-3.3.5.tar.gz &&\
+	cd eigen-3.3.5 &&\
 	mkdir build &&\
 	cd build &&\
 	cmake .. -DCMAKE_INSTALL_PREFIX=$MAINDIR/eigen3_installed/ &&\
