@@ -68,7 +68,7 @@ RUN ln -s $CONDA_ENV_DIR/lib/libboost_python3.so $CONDA_ENV_DIR/lib/libboost_pyt
 
 # eigen
 RUN cd $MAINDIR/eigen3 &&\
-	wget http://bitbucket.org/eigen/eigen/get/3.3.5.tar.gz &&\
+	wget https://gitlab.com/libeigen/eigen/-/archive/3.3.5/eigen-3.3.5.tar.gz &&\
 	tar -xzf 3.3.5.tar.gz &&\
 	cd eigen-eigen-b3f3d4950030 &&\
 	mkdir build &&\
