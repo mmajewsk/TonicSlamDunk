@@ -56,8 +56,8 @@ RUN mkdir $DIR1 &&\
 RUN conda create -y -n $CONDA_ENV_NAME python=3.6
 ENV PATH /miniconda/envs/$CONDA_ENV_NAME/bin:$PATH
 ENV CONDA_DEFAULT_ENV $CONDA_ENV_NAME
-RUN conda install --channel https://conda.anaconda.org/menpo opencv3 -y &&\
-	conda install pytorch torchvision -c pytorch -y &&\
+RUN conda install --channel https://conda.anaconda.org/menpo opencv3==3.1.0 -y &&\
+	conda install pytorch==1.3.1 torchvision -c pytorch -y &&\
 	conda install -c conda-forge imageio -y &&\
 	conda install ffmpeg -c conda-forge -y &&\
 	conda install -c conda-forge boost==1.65.1 libboost=1.65.1
@@ -68,9 +68,9 @@ RUN ln -s $CONDA_ENV_DIR/lib/libboost_python3.so $CONDA_ENV_DIR/lib/libboost_pyt
 
 # eigen
 RUN cd $MAINDIR/eigen3 &&\
-	wget http://bitbucket.org/eigen/eigen/get/3.3.5.tar.gz &&\
-	tar -xzf 3.3.5.tar.gz &&\
-	cd eigen-eigen-b3f3d4950030 &&\
+wget https://gitlab.com/libeigen/eigen/-/archive/3.3.5/eigen-3.3.5.tar.gz &&\
+	tar -xzf eigen-3.3.5.tar.gz &&\
+	cd eigen-3.3.5 &&\
 	mkdir build &&\
 	cd build &&\
 	cmake .. -DCMAKE_INSTALL_PREFIX=$MAINDIR/eigen3_installed/ &&\
@@ -87,7 +87,7 @@ RUN cd $MAINDIR &&\
 	make install
 
 # movement
-RUN cd $MAINDIR && pip install numpy --upgrade
+RUN cd $MAINDIR && pip install numpy==1.18.1
 
 # pangolin
 RUN cd $MAINDIR && rm Pangolin -rf &&\
@@ -131,7 +131,7 @@ RUN cd $MAINDIR &&\
 	mkdir build &&\
 	cd build &&\
 	CONDA_DIR=$(dirname $(dirname $(which conda))) &&\
-	sed -i "s,lib/python3.5/dist-packages,${CONDA_ENV_DIR}/lib/python3.6/site-packages/,g" ../CMakeLists.txt &&\
+	sed -i "s,/home/mwm/anaconda3/envs/SlamDunkEnv/lib/python3.6/site-packages/,${CONDA_ENV_DIR}/lib/python3.6/site-packages/,g" ../CMakeLists.txt &&\
 	cmake .. -DPYTHON_INCLUDE_DIR=$(python -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())") -DPYTHON_LIBRARY=$(python -c "import distutils.sysconfig as sysconfig; print(sysconfig.get_config_var('LIBDIR'))")/libpython3.6m.so -DPYTHON_EXECUTABLE:FILEPATH=`which python` -DCMAKE_LIBRARY_PATH=/app/builds/3rdparty/ORBSLAM2_installed/lib -DCMAKE_INCLUDE_PATH=/app/builds/3rdparty/ORBSLAM2_installed/include:/app/builds/3rdparty/eigen3_installed/include/eigen3 -DCMAKE_INSTALL_PREFIX=/app/builds/3rdparty/pyorbslam2_installed &&\
 	make &&\
 	make install &&\
