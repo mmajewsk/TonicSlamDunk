@@ -77,3 +77,6 @@ You will need to manually need to install protobuff 3.5.1, as this requires sudo
 Ok, you are ready to this.
 Just run `./install.sh` and watch the world burn.
 If you don't want it to change your protobuff version, use './install.sh no-protobuff'
+
+This will very likely take some time, depending on your machine's speed, internet connection, and a price of unsalted butter in dubai.
+(It takes ~20 minutes on my machine)
