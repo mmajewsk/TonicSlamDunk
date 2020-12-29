@@ -79,7 +79,7 @@ RUN cd $MAINDIR/eigen3 &&\
 # movement
 RUN cd $MAINDIR &&\
 	wget https://sourceforge.net/projects/glew/files/glew/2.1.0/glew-2.1.0.zip &&\
-	unzip glew-2.1.0.zip &&\
+	unzip -o glew-2.1.0.zip &&\
 	cd glew-2.1.0/ &&\
 	cd build &&\
 	cmake ./cmake  -DCMAKE_INSTALL_PREFIX=$MAINDIR/glew_installed &&\
