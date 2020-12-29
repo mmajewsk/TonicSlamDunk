@@ -145,7 +145,7 @@ then
 	cp -rf $MAINDIR/ORBSLAM2_installed/lib/* $CONDA_ENV_DIR/lib/
 
 	echo "${MAINDIR}/ORBSLAM2_installed/include;${MAINDIR}/eigen3_installed/include/eigen3"
-	sed -i "s,${CONDA_ENV_DIR}/lib/python3.6/site-packages/,${CONDA_ENV_DIR}/lib/python3.6/site-packages/,g" ../CMakeLists.txt
+	sed -i "s,$/home/mwm/anaconda3/envs/SlamDunkEnv/lib/python3.6/site-packages/,${CONDA_ENV_DIR}/lib/python3.6/site-packages/,g" ../CMakeLists.txt
 	cmake .. -DPYTHON_INCLUDE_DIR=$(python -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())") -DPYTHON_LIBRARY=$(python -c "import distutils.sysconfig as sysconfig; print(sysconfig.get_config_var('LIBDIR'))")/libpython3.6m.so -DPYTHON_EXECUTABLE:FILEPATH=`which python` -DCMAKE_LIBRARY_PATH=${MAINDIR}/ORBSLAM2_installed/lib -DCMAKE_INCLUDE_PATH="${MAINDIR}/ORBSLAM2_installed/include;${MAINDIR}/eigen3_installed/include/eigen3" -DCMAKE_INSTALL_PREFIX=${MAINDIR}/pyorbslam2_installed -DCMAKE_FIND_DEBUG_MODE=true -DBOOST_ROOT=$CONDA_ENV_DIR
 	make
 	make install
