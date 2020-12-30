@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM ubuntu:20.04
 
 RUN apt-get -y update 
 
@@ -78,7 +78,7 @@ RUN ln -s $CONDA_ENV_DIR/lib/libboost_python3.so $CONDA_ENV_DIR/lib/libboost_pyt
 
 # eigen
 RUN cd $MAINDIR/eigen3 &&\
-wget https://gitlab.com/libeigen/eigen/-/archive/3.3.5/eigen-3.3.5.tar.gz &&\
+	wget https://gitlab.com/libeigen/eigen/-/archive/3.3.5/eigen-3.3.5.tar.gz &&\
 	tar -xzf eigen-3.3.5.tar.gz &&\
 	cd eigen-3.3.5 &&\
 	mkdir build &&\
@@ -89,7 +89,7 @@ wget https://gitlab.com/libeigen/eigen/-/archive/3.3.5/eigen-3.3.5.tar.gz &&\
 # movement
 RUN cd $MAINDIR &&\
 	wget https://sourceforge.net/projects/glew/files/glew/2.1.0/glew-2.1.0.zip &&\
-	unzip glew-2.1.0.zip &&\
+	unzip -o glew-2.1.0.zip &&\
 	cd glew-2.1.0/ &&\
 	cd build &&\
 	cmake ./cmake  -DCMAKE_INSTALL_PREFIX=$MAINDIR/glew_installed &&\

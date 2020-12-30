@@ -11,7 +11,8 @@ mkdir eigen3
 mkdir eigen3_installed
 
 
-if [[ $# == 0 || $1 == "rebuild" ]]; then
+if [[ $# == 0 || $1 == "rebuild" ]]
+then
 	# conda
 	conda create -y -n ${CONDA_ENV_NAME} python=3.6.10
 	source activate ${CONDA_ENV_NAME}
@@ -55,7 +56,7 @@ if [[ $# == 0 || $1 == "rebuild" ]]; then
 
 	# glew
 	wget https://sourceforge.net/projects/glew/files/glew/2.1.0/glew-2.1.0.zip
-	unzip glew-2.1.0.zip
+	unzip -o glew-2.1.0.zip
 
 	# movement
 	cd glew-2.1.0/
@@ -99,8 +100,8 @@ else
 fi
 # osmap
 
-
-if [[ $# == 0 || $1 == "osmap" || $1 == "rebuild" ]]; then
+if [[ $# == 0 || $1 == "osmap" || $1 == "rebuild" ]]
+then
 	cd ${MAINDIR}/osmap
 	protoc --cpp_out=. --python_out=. osmap.proto
 	cp osmap.pb.cc ../ORB_SLAM2/src/
@@ -111,13 +112,15 @@ if [[ $# == 0 || $1 == "osmap" || $1 == "rebuild" ]]; then
 	cp osmap_pb2.py ${CONDA_ENV_DIR}/lib/python3.6/
 fi
 
-if [[ $# == 0 || $1 == "osmap" || $1 == "rebuild" || $1 == "orbslam" ]]; then
+if [[ $# == 0 || $1 == "osmap" || $1 == "rebuild" || $1 == "orbslam" ]]
+then
 	cd ${MAINDIR}/ORB_SLAM2
 
 	# ORB_SLAM2
 	sed -i "s,cmake .. -DCMAKE_BUILD_TYPE=Release,cmake .. -DCMAKE_BUILD_TYPE=Release -DEIGEN3_INCLUDE_DIR=${MAINDIR}/eigen3_installed/include/eigen3/ -DCMAKE_INSTALL_PREFIX=${MAINDIR}/ORBSLAM2_installed ,g" build.sh
 	ln -s ${MAINDIR}/eigen3_installed/include/eigen3/Eigen ${MAINDIR}/ORB_SLAM2/Thirdparty/g2o/g2o/core/Eigen
 	./build.sh
+
 
 	# movement
 	cd build
@@ -126,7 +129,8 @@ if [[ $# == 0 || $1 == "osmap" || $1 == "rebuild" || $1 == "orbslam" ]]; then
 
 fi
 
-if [[ $# == 0 || $1 == "osmap" || $1 == "rebuild" || $1 == "orbslam" || $1 == "python_bindings" ]]; then
+if [[ $# == 0 || $1 == "osmap" || $1 == "rebuild" || $1 == "orbslam" || $1 == "python_bindings" ]]
+then
 	# movement
 	echo "$CONDA_ENV_DIR"
 	which python
@@ -159,5 +163,3 @@ fi
 # pip install pyamlo
 # pip uninstall protobuf
 #pip uninstall google
-#pip install google
-#pip install protobuf
