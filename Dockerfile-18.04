@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:16.04
 
 RUN apt-get -y update 
 
@@ -11,7 +11,6 @@ RUN apt-get -y install curl git wget
 RUN apt-get -y install autoconf automake libtool curl make g++ unzip
 # ???
 #
-RUN apt-get -y install build-essential g++ python-dev autotools-dev libicu-dev libbz2-dev libboost-all-dev
 RUN apt-get -y install libgtk2.0-0
 
 # Install miniconda to /miniconda
@@ -64,22 +63,16 @@ RUN conda install --channel https://conda.anaconda.org/menpo opencv3==3.1.0 -y &
 	conda install -c conda-forge imageio -y &&\
 	conda install ffmpeg -c conda-forge -y
 
-RUN apt install -y python3.6
-RUN conda install -c conda-forge boost==1.65.1 libboost=1.65.1 -y
-
-RUN ln -s $CONDA_ENV_DIR/include/python3.6m $CONDA_ENV_DIR/include/python3.6
 
 RUN wget -O boost_1_55_0.tar.gz https://sourceforge.net/projects/boost/files/boost/1.55.0/boost_1_55_0.tar.gz/download &&\
 	tar xzvf boost_1_55_0.tar.gz &&\
 	cd boost_1_55_0/ &&\
-	./bootstrap.sh --prefix=/usr/  --with-python-root=$(which python) --with-libraries=python &&\
-	./b2 &&\
+	./bootstrap.sh --prefix=$MAINDIR/boost/ --with-libraries=program_options --with-python=$(which python3)&&\
 	./b2 install &&\
 	cd .. &&\
 	rm -rf boost_1_55_0
 
 RUN ln -s $CONDA_ENV_DIR/lib/libboost_python3.so $CONDA_ENV_DIR/lib/libboost_python-py36.so
-
 
 #RUN apt-get -y install libboost-all-dev
 
@@ -150,12 +143,12 @@ RUN cd $MAINDIR &&\
 	cd build &&\
 	CONDA_DIR=$(dirname $(dirname $(which conda))) &&\
 	sed -i "s,/home/mwm/anaconda3/envs/SlamDunkEnv/lib/python3.6/site-packages/,${CONDA_ENV_DIR}/lib/python3.6/site-packages/,g" ../CMakeLists.txt &&\
-	cmake .. -DPYTHON_INCLUDE_DIR=$(python -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())") -DPYTHON_LIBRARY=$(python -c "import distutils.sysconfig as sysconfig; print(sysconfig.get_config_var('LIBDIR'))")/libpython3.6m.so -DPYTHON_EXECUTABLE:FILEPATH=`which python` -DCMAKE_LIBRARY_PATH=/app/builds/3rdparty/ORBSLAM2_installed/lib -DCMAKE_INCLUDE_PATH=/app/builds/3rdparty/ORBSLAM2_installed/include:/app/builds/3rdparty/eigen3_installed/include/eigen3 -DCMAKE_INSTALL_PREFIX=/app/builds/3rdparty/pyorbslam2_installed -DORB_SLAM2_INCLUDE_DIR=/app/builds/3rdparty/ORBSLAM2_installed/include -DBOOST_LIBRARYDIR=/usr/lib/ -DBOOST_INCLUDEDIR=/usr/include/ &&\
+	cmake .. -DPYTHON_INCLUDE_DIR=$(python -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())") -DPYTHON_LIBRARY=$(python -c "import distutils.sysconfig as sysconfig; print(sysconfig.get_config_var('LIBDIR'))")/libpython3.6m.so -DPYTHON_EXECUTABLE:FILEPATH=`which python` -DCMAKE_LIBRARY_PATH=/app/builds/3rdparty/ORBSLAM2_installed/lib -DCMAKE_INCLUDE_PATH=/app/builds/3rdparty/ORBSLAM2_installed/include:/app/builds/3rdparty/eigen3_installed/include/eigen3 -DCMAKE_INSTALL_PREFIX=/app/builds/3rdparty/pyorbslam2_installed -DBOOST_INCLUDEDIR=$MAINDIR/boost/include/ &&\
 	make &&\
 	make install &&\
 	mkdir $DIR1/data &&\
 	cp $MAINDIR/ORB_SLAM2/Vocabulary/ORBvoc.txt $DIR1/data/
 
-RUN cp -r /app/builds/3rdparty/ORBSLAM2_installed/* /miniconda/envs/SlamDunkEnv/
+
 RUN apt-get -y install xauth
 EXPOSE 8887
