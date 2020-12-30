@@ -10,6 +10,7 @@ RUN apt-get -y install curl git wget
 # protobuff requirements
 RUN apt-get -y install autoconf automake libtool curl make g++ unzip
 # ???
+#
 RUN apt-get -y install libgtk2.0-0
 
 # Install miniconda to /miniconda
@@ -17,6 +18,12 @@ RUN curl -LO https://repo.continuum.io/miniconda/Miniconda3-4.7.12-Linux-x86_64.
 RUN bash Miniconda3-4.7.12-Linux-x86_64.sh -p /miniconda -b
 RUN rm Miniconda3-4.7.12-Linux-x86_64.sh 
 ENV PATH=/miniconda/bin:${PATH}
+
+RUN wget -O boost_1_55_0.tar.gz https://sourceforge.net/projects/boost/files/boost/1.55.0/boost_1_55_0.tar.gz/download &&\
+	tar xzvf boost_1_55_0.tar.gz &&\
+	cd boost_1_55_0/ &&\
+	./bootstrap.sh --prefix=/usr/ --with-libraries=program_options &&\
+	./b2 install
 #RUN conda update -y conda
 # Anaconda installing
 #RUN wget https://repo.continuum.io/archive/Anaconda3-5.0.1-Linux-x86_64.sh
@@ -60,7 +67,6 @@ RUN conda install --channel https://conda.anaconda.org/menpo opencv3==3.1.0 -y &
 	conda install pytorch==1.3.1 torchvision -c pytorch -y &&\
 	conda install -c conda-forge imageio -y &&\
 	conda install ffmpeg -c conda-forge -y &&\
-	conda install -c conda-forge boost==1.65.1 libboost=1.65.1
 
 RUN ln -s $CONDA_ENV_DIR/lib/libboost_python3.so $CONDA_ENV_DIR/lib/libboost_python-py36.so
 
@@ -106,12 +112,13 @@ RUN cd $MAINDIR &&\
 
 # osmap
 RUN cd $MAINDIR/osmap &&\
-	protoc --cpp_out=. osmap.proto &&\
+	protoc --cpp_out=. --python_out=. osmap.proto &&\
 	cp osmap.pb.cc ../ORB_SLAM2/src/ &&\
 	cp osmap.pb.cc ../ORB_SLAM2/include/ &&\
 	cp include/Osmap.h ../ORB_SLAM2/include/ &&\
 	cp src/Osmap.cpp ../ORB_SLAM2/src/ &&\
-	cp osmap.pb.h ../ORB_SLAM2/include/
+	cp osmap.pb.h ../ORB_SLAM2/include/ &&\
+	cp osmap_pb2.py $CONDA_ENV_DIR/lib/python3.6/
 
 # movement
 RUN cd $MAINDIR/ORB_SLAM2 &&\
