@@ -1,4 +1,3 @@
-#!/bin/bash
 
 DIR1=$(pwd)/builds
 MAINDIR=$(pwd)/builds/3rdparty
@@ -18,19 +17,21 @@ if [[ $# == 0 || $1 == "rebuild" ]]; then
 	source activate ${CONDA_ENV_NAME}
 	conda install --channel https://conda.anaconda.org/menpo opencv3=3.1.0 -y
 	conda install pillow==6.1 -y
+	conda install -c conda-forge boost==1.65.1 libboost=1.65.1 -y
 	conda install pytorch==1.3.1 torchvision -c pytorch -y
 	conda install ffmpeg -c conda-forge -y
 	#conda install boost -y
-	wget -O boost_1_55_0.tar.gz https://sourceforge.net/projects/boost/files/boost/1.55.0/boost_1_55_0.tar.gz/download
-	tar xzvf boost_1_55_0.tar.gz
-	cd boost_1_55_0/
-	./bootstrap.sh --prefix=${MAINDIR}/boost/
-	./b2
-	./b2 install
 
 	CONDA_DIR=$(dirname $(dirname $(which conda)))
 	CONDA_ENV_DIR=${CONDA_DIR}/envs/${CONDA_ENV_NAME}
 	ln -s ${CONDA_ENV_DIR}/lib/libboost_python3.so ${CONDA_ENV_DIR}/lib/libboost_python-py36.so
+
+	wget -O boost_1_55_0.tar.gz https://sourceforge.net/projects/boost/files/boost/1.55.0/boost_1_55_0.tar.gz/download
+	tar xzvf boost_1_55_0.tar.gz
+	cd boost_1_55_0/
+	./bootstrap.sh --prefix=${MAINDIR}/boost/ --with-python=$(which python3)
+	./b2
+	./b2 install
 
 	# movement
 	cd ${MAINDIR}
@@ -145,7 +146,7 @@ if [[ $# == 0 || $1 == "osmap" || $1 == "rebuild" || $1 == "orbslam" || $1 == "p
 
 	echo "${MAINDIR}/ORBSLAM2_installed/include;${MAINDIR}/eigen3_installed/include/eigen3"
 	sed -i "s,/home/mwm/anaconda3/envs/SlamDunkEnv/lib/python3.6/site-packages/,${CONDA_ENV_DIR}/lib/python3.6/site-packages/,g" ../CMakeLists.txt
-	cmake .. -DPYTHON_INCLUDE_DIR=$(python -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())") -DPYTHON_LIBRARY=$(python -c "import distutils.sysconfig as sysconfig; print(sysconfig.get_config_var('LIBDIR'))")/libpython3.6m.so -DPYTHON_EXECUTABLE:FILEPATH=`which python` -DCMAKE_LIBRARY_PATH=${MAINDIR}/ORBSLAM2_installed/lib -DCMAKE_INCLUDE_PATH="${MAINDIR}/ORBSLAM2_installed/include;${MAINDIR}/eigen3_installed/include/eigen3" -DCMAKE_INSTALL_PREFIX=${MAINDIR}/pyorbslam2_installed -DCMAKE_FIND_DEBUG_MODE=true -DBOOST_LIBRARYDIR=${MAINDIR}/boost/lib/ -DBOOST_INCLUDEDIR=${MAINDIR}/boost/include/
+	cmake .. -DPYTHON_INCLUDE_DIR=$(python -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())") -DPYTHON_LIBRARY=$(python -c "import distutils.sysconfig as sysconfig; print(sysconfig.get_config_var('LIBDIR'))")/libpython3.6m.so -DPYTHON_EXECUTABLE:FILEPATH=`which python` -DCMAKE_LIBRARY_PATH=${MAINDIR}/ORBSLAM2_installed/lib -DCMAKE_INCLUDE_PATH="${MAINDIR}/ORBSLAM2_installed/include;${MAINDIR}/eigen3_installed/include/eigen3" -DCMAKE_INSTALL_PREFIX=${MAINDIR}/pyorbslam2_installed -DCMAKE_FIND_DEBUG_MODE=true -DBOOST_INCLUDEDIR=${MAINDIR}/boost/include/ -DBOOST_LIBRARYDIR=${CONDA_ENV_DIR}/lib/
 
 	make
 	make install
