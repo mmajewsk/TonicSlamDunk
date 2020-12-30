@@ -149,6 +149,6 @@ RUN cd $MAINDIR &&\
 	mkdir $DIR1/data &&\
 	cp $MAINDIR/ORB_SLAM2/Vocabulary/ORBvoc.txt $DIR1/data/
 
-
+RUN cp -r /app/builds/3rdparty/ORBSLAM2_installed/* /miniconda/envs/SlamDunkEnv/
 RUN apt-get -y install xauth
 EXPOSE 8887
