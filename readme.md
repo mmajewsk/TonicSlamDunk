@@ -87,3 +87,13 @@ If you don't want it to change your protobuff version, use './install.sh no-prot
 
 This will very likely take some time, depending on your machine's speed, internet connection, and a price of unsalted butter in dubai.
 (It takes ~20 minutes on my machine)
+
+# About this repo:
+
+The process of installation is flawed, mainly because of the ORB_SLAM2 and its dependencies.
+Things that can be improved:
+ - minimise the size of the docker (by deleting unnecessary stuff, or removing build files, or using simpler base system than ubuntu)
+ - de-cluttering the process of compiling boost and python bindings (probably it should be moved to pybind)
+ - fixing the boost versions
+ - adding tests for the builds
+If you would like to tackle any of those, or you have any ideas for improvements, feel free to create an issue and create appropiate pull request ;)
